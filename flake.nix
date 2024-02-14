@@ -9,7 +9,11 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      devShells.default = pkgs.mkShellNoCC {
+      devShells.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          pkgsi686Linux.glibc
+          llvm
+        ];
         nativeBuildInputs = with pkgs; [
           clang
 
