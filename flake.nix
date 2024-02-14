@@ -22,7 +22,8 @@
           ];
           
           buildPhase = ''
-            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c drop-arp.c -o drop-arp.o
+            mkdir $out
+            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c drop-arp.c -o $out/drop-arp.o
           '';
         };
       };
@@ -33,6 +34,7 @@
         ];
         nativeBuildInputs = with pkgs; [
           clang
+          clang-tools
 
           libbpf
         ];
