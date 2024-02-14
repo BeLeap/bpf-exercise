@@ -12,6 +12,8 @@
       devShells.default = pkgs.mkShellNoCC {
         nativeBuildInputs = with pkgs; [
           clang
+
+          libbpf
         ];
       };
     }
