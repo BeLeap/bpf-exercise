@@ -9,6 +9,23 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
+      packages = {
+        drop-arp = pkgs.stdenv.mkDerivation {
+          inherit system;
+          name = "drop-arp";
+          version = "0.0.0";
+          src = ./.;
+
+          buildInputs = with pkgs; [
+            pkgsi686Linux.glibc
+            llvm
+          ];
+          
+          buildPhase = ''
+            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c drop-arp.c -o drop-arp.o
+          '';
+        };
+      };
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           pkgsi686Linux.glibc
