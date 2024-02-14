@@ -7,12 +7,8 @@
   outputs = { nixpkgs, flake-utils, ... }: flake-utils.lib.eachDefaultSystem (system: 
     let
       pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      packages = {
-        drop-arp = pkgs.stdenv.mkDerivation {
-          inherit system;
-          name = "drop-arp";
+      drv = { name }: pkgs.stdenv.mkDerivation {
+          inherit system name;
           version = "0.0.0";
           src = ./.;
 
@@ -23,9 +19,14 @@
           
           buildPhase = ''
             mkdir $out
-            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c drop-arp.c -o $out/drop-arp.o
+            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c ${name}.c -o $out/${name}.o
           '';
-        };
+      };
+    in
+    {
+      packages = {
+        drop-arp = drv { name = "drop-arp"; };
+        drop-icmp = drv { name = "drop-icmp"; };
       };
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
