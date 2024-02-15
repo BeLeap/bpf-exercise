@@ -19,7 +19,7 @@
 
           buildPhase = ''
             mkdir $out
-            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c ${name}.c -o $out/${name}.o
+            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c c/${name}.c -o $out/${name}.o
           '';
       };
     in
