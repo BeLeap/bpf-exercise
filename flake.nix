@@ -7,16 +7,16 @@
   outputs = { nixpkgs, flake-utils, ... }: flake-utils.lib.eachDefaultSystem (system: 
     let
       pkgs = nixpkgs.legacyPackages.${system};
+      buildInputs = with pkgs; [
+        pkgsi686Linux.glibc
+        llvm
+      ];
+          
       clangBpfDerivation = { name }: pkgs.stdenv.mkDerivation {
-          inherit system name;
+          inherit system name buildInputs;
           version = "0.0.0";
           src = ./.;
 
-          buildInputs = with pkgs; [
-            pkgsi686Linux.glibc
-            llvm
-          ];
-          
           buildPhase = ''
             mkdir $out
             ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c ${name}.c -o $out/${name}.o
@@ -30,10 +30,7 @@
         drop-tcp = clangBpfDerivation { name = "drop-tcp"; };
       };
       devShells.default = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          pkgsi686Linux.glibc
-          llvm
-        ];
+        inherit buildInputs;
         nativeBuildInputs = with pkgs; [
           clang
           clang-tools
