@@ -27,6 +27,7 @@
       packages = {
         drop-arp = drv { name = "drop-arp"; };
         drop-icmp = drv { name = "drop-icmp"; };
+        drop-tcp = drv { name = "drop-tcp"; };
       };
       devShells.default = pkgs.mkShell {
         buildInputs = with pkgs; [
