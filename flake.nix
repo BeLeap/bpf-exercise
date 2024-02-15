@@ -14,23 +14,23 @@
           libbpf
         ];
         
-        drv = { name }: pkgs.stdenv.mkDerivation {
+        drv = { name, path }: pkgs.stdenv.mkDerivation {
           inherit system name buildInputs;
           version = "0.0.0";
           src = ./.;
 
           buildPhase = ''
             mkdir $out
-            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c c/${name}.c -o $out/${name}.o
+            ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c ${path} -o $out/${name}.o
           '';
         };
       };
     in
     {
       packages = {
-        drop-arp = cHelper.drv { name = "drop-arp"; };
-        drop-icmp = cHelper.drv { name = "drop-icmp"; };
-        drop-tcp = cHelper.drv { name = "drop-tcp"; };
+        drop-arp = cHelper.drv { name = "drop-arp"; path = "firewalling-with-bpf-xdp/drop-arp.c"; };
+        drop-icmp = cHelper.drv { name = "drop-icmp"; path = "firewalling-with-bpf-xdp/drop-icmp.c"; };
+        drop-tcp = cHelper.drv { name = "drop-tcp"; path = "firewalling-with-bpf-xdp/drop-tcp.c"; };
       };
       devShells.default = pkgs.mkShell {
         buildInputs = cHelper.buildInputs;
