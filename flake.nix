@@ -10,6 +10,7 @@
       buildInputs = with pkgs; [
         pkgsi686Linux.glibc
         llvm
+        libbpf
       ];
           
       clangBpfDerivation = { name }: pkgs.stdenv.mkDerivation {
@@ -34,8 +35,6 @@
         nativeBuildInputs = with pkgs; [
           clang
           clang-tools
-
-          libbpf
         ];
       };
     }
