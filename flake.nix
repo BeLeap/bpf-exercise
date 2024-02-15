@@ -6,14 +6,15 @@
   };
   outputs = { nixpkgs, flake-utils, ... }: flake-utils.lib.eachDefaultSystem (system: 
     let
-      pkgs = nixpkgs.legacyPackages.${system};
-      buildInputs = with pkgs; [
-        pkgsi686Linux.glibc
-        llvm
-        libbpf
-      ];
-          
-      clangBpfDerivation = { name }: pkgs.stdenv.mkDerivation {
+      pkgs = import nixpkgs { inherit system; };
+      cHelper = rec {
+        buildInputs = with pkgs; [
+          pkgsi686Linux.glibc
+          llvm
+          libbpf
+        ];
+        
+        drv = { name }: pkgs.stdenv.mkDerivation {
           inherit system name buildInputs;
           version = "0.0.0";
           src = ./.;
@@ -22,16 +23,17 @@
             mkdir $out
             ${pkgs.clang}/bin/clang -O2 -Wall -target bpf -c c/${name}.c -o $out/${name}.o
           '';
+        };
       };
     in
     {
       packages = {
-        drop-arp = clangBpfDerivation { name = "drop-arp"; };
-        drop-icmp = clangBpfDerivation { name = "drop-icmp"; };
-        drop-tcp = clangBpfDerivation { name = "drop-tcp"; };
+        drop-arp = cHelper.drv { name = "drop-arp"; };
+        drop-icmp = cHelper.drv { name = "drop-icmp"; };
+        drop-tcp = cHelper.drv { name = "drop-tcp"; };
       };
       devShells.default = pkgs.mkShell {
-        inherit buildInputs;
+        buildInputs = cHelper.buildInputs;
         nativeBuildInputs = with pkgs; [
           clang
           clang-tools
