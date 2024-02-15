@@ -16,4 +16,3 @@ __attribute__((section("ingress"), used)) int drop(struct __sk_buff *skb) {
 
   return TC_ACT_SHOT;
 }
-
